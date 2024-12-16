@@ -113,3 +113,15 @@ variable "ecs_container_environment_variables" {
   default     = null
 }
 
+variable "create_ecs_task_definition" {
+  description = "This is to create a new ECS task definition or use an existing one"
+  type        = bool
+  default     = true
+}
+
+variable "byo_ecs_task_definition_arn" {
+  description = "This is the BYO (Bring Your Own) ECS task definition ARN for the application"
+  type        = string
+  default     = ""
+}
+

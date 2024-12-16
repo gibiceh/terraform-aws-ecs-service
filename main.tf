@@ -1,8 +1,5 @@
 #: Locals ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-data "aws_ecs_task_definition" "this" {
-  task_definition = aws_ecs_task_definition.this.arn
-  depends_on      = [aws_ecs_task_definition.this]
-}
+
 
 #: DRY module implementations:::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -22,7 +19,8 @@ resource "aws_cloudwatch_log_group" "this" {
 #: And here we can already see that in order to run a task, we have to give our task a task role.
 #: This role regulates what AWS services the task has access to, e.g. your application is using a DynamoDB, then the task role must give the task access to Dynamo.
 resource "aws_iam_role" "ecs_task_role" {
-  name = "${var.default_resource_name}-ecsTaskRole"
+  count = var.create_ecs_task_definition ? 1 : 0
+  name  = "${var.default_resource_name}-ecsTaskRole"
 
   assume_role_policy = <<EOF
 {
@@ -43,6 +41,7 @@ EOF
 }
 
 resource "aws_iam_policy" "this" {
+  count       = var.create_ecs_task_definition ? 1 : 0
   name        = "${var.default_resource_name}-task-policy-dynamodb"
   description = "Policy for the ecs_app:  ${var.default_resource_name}"
 
@@ -63,6 +62,7 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment" {
+  count      = var.create_ecs_task_definition ? 1 : 0
   role       = aws_iam_role.ecs_task_role.name
   policy_arn = aws_iam_policy.this.arn
 }
@@ -70,7 +70,8 @@ resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment" {
 #: But another role is needed, the task execution role. This is due to the fact that the tasks will be executed “serverless” with the Fargate configuration.
 #: This enables the service to e.g. pull the image from ECR, spin up or deregister tasks etc. AWS provides you with a predefined policy for this, so I just attached this to my role:
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "${var.default_resource_name}-ecsTaskExecutionRole"
+  count = var.create_ecs_task_definition ? 1 : 0
+  name  = "${var.default_resource_name}-ecsTaskExecutionRole"
 
   assume_role_policy = <<EOF
 {
@@ -91,6 +92,7 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "ecs-task-execution-role-policy-attachment" {
+  count      = var.create_ecs_task_definition ? 1 : 0
   role       = aws_iam_role.ecs_task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/PowerUserAccess"
   #:TODO
@@ -124,7 +126,7 @@ resource "aws_ecs_cluster" "this" {
 resource "aws_ecs_service" "this" {
   name            = var.ecs_service_name
   cluster         = aws_ecs_cluster.this.id
-  task_definition = aws_ecs_task_definition.this.arn
+  task_definition = aws_ecs_task_definition.this.arn != null ? aws_ecs_task_definition.this.arn : var.byo_ecs_task_definition_arn
   desired_count   = var.ecs_desired_count
 
   deployment_minimum_healthy_percent = 50
@@ -196,6 +198,7 @@ resource "aws_appautoscaling_policy" "scaling_based_on_cpu" {
 }
 
 resource "aws_ecs_task_definition" "this" {
+  count                    = var.create_ecs_task_definition ? 1 : 0
   family                   = var.default_resource_name
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
