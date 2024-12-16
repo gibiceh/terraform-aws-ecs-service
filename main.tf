@@ -63,8 +63,8 @@ EOF
 
 resource "aws_iam_role_policy_attachment" "ecs-task-role-policy-attachment" {
   count      = var.create_ecs_task_definition ? 1 : 0
-  role       = aws_iam_role.ecs_task_role.name
-  policy_arn = aws_iam_policy.this.arn
+  role       = join("", aws_iam_role.ecs_task_role.*.name)
+  policy_arn = join("", aws_iam_policy.this.*.arn)
 }
 
 #: But another role is needed, the task execution role. This is due to the fact that the tasks will be executed “serverless” with the Fargate configuration.
@@ -92,8 +92,9 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "ecs-task-execution-role-policy-attachment" {
-  count      = var.create_ecs_task_definition ? 1 : 0
-  role       = aws_iam_role.ecs_task_execution_role.name
+  count = var.create_ecs_task_definition ? 1 : 0
+  role  = join("", aws_iam_role.ecs_task_execution_role.*.name)
+
   policy_arn = "arn:aws:iam::aws:policy/PowerUserAccess"
   #:TODO
   #: Need to limit to below role and then access to s3 bucket for env variables
