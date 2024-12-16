@@ -128,7 +128,7 @@ resource "aws_ecs_cluster" "this" {
 resource "aws_ecs_service" "this" {
   name            = var.ecs_service_name
   cluster         = aws_ecs_cluster.this.id
-  task_definition = join("", aws_ecs_task_definition.this.*.arn) != null ? join("", aws_ecs_task_definition.this.*.arn) : var.byo_ecs_task_definition_arn
+  task_definition = join("", aws_ecs_task_definition.this.*.arn) != "" ? join("", aws_ecs_task_definition.this.*.arn) : var.byo_ecs_task_definition_arn
   desired_count   = var.ecs_desired_count
 
   deployment_minimum_healthy_percent = 50
