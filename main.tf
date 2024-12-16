@@ -160,7 +160,7 @@ resource "aws_ecs_service" "this" {
 resource "aws_appautoscaling_target" "ecs" {
   max_capacity       = var.ecs_max_capacity
   min_capacity       = var.ecs_min_capacity
-  resource_id        = "service/${aws_ecs_cluster.cluster.name}/${aws_ecs_service.service.name}"
+  resource_id        = "service/${aws_ecs_cluster.this.name}/${aws_ecs_service.this.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
 }
@@ -205,8 +205,8 @@ resource "aws_ecs_task_definition" "this" {
   requires_compatibilities = ["FARGATE"]
   cpu                      = var.fargate_cpu
   memory                   = var.fargate_memory
-  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
-  task_role_arn            = aws_iam_role.ecs_task_role.arn
+  execution_role_arn       = join("", aws_iam_role.ecs_task_execution_role.*.arn)
+  task_role_arn            = join("", aws_iam_role.ecs_task_role.*.arn)
   container_definitions = jsonencode([{
     name        = var.ecs_container_name
     image       = var.ecs_container_image
