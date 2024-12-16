@@ -11,6 +11,6 @@ output "ecs_task_security_group_id" {
 }
 
 output "ecs_task_definition_arn" {
-  value = aws_ecs_task_definition.this.arn
+  value = join("", aws_ecs_task_definition.this.*.arn)
 }
 

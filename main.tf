@@ -8,6 +8,7 @@
 #: CloudWatch
 #: -----------------------------------------------------------------------------
 resource "aws_cloudwatch_log_group" "this" {
+  count             = var.create_ecs_task_definition ? 1 : 0
   name              = var.default_resource_name
   tags              = var.tags
   retention_in_days = 30
@@ -127,7 +128,7 @@ resource "aws_ecs_cluster" "this" {
 resource "aws_ecs_service" "this" {
   name            = var.ecs_service_name
   cluster         = aws_ecs_cluster.this.id
-  task_definition = aws_ecs_task_definition.this.arn != null ? aws_ecs_task_definition.this.arn : var.byo_ecs_task_definition_arn
+  task_definition = join("", aws_ecs_task_definition.this.*.arn) != null ? join("", aws_ecs_task_definition.this.*.arn) : var.byo_ecs_task_definition_arn
   desired_count   = var.ecs_desired_count
 
   deployment_minimum_healthy_percent = 50
@@ -235,7 +236,7 @@ resource "aws_ecs_task_definition" "this" {
     logConfiguration = {
       logDriver = "awslogs"
       options = {
-        awslogs-group         = aws_cloudwatch_log_group.this.name
+        awslogs-group         = join("", aws_cloudwatch_log_group.this.*.name)
         awslogs-stream-prefix = "ecs"
         awslogs-region        = var.aws_region
       }
