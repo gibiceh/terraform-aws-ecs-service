@@ -57,6 +57,30 @@ variable "ecs_desired_count" {
   default     = 1
 }
 
+variable "ecs_max_capacity" {
+  description = "The maximum capacity for the ECS service"
+  type        = number
+  default     = 1
+}
+
+variable "ecs_min_capacity" {
+  description = "The minimum capacity for the ECS service"
+  type        = number
+  default     = 1
+}
+
+variable "ecs_target_memory_utilization" {
+  description = "The target memory utilization for the ECS service for autoscaling purposes"
+  type        = number
+  default     = 70
+}
+
+variable "ecs_target_cpu_utilization" {
+  description = "The target CPU utilization for the ECS service for autoscaling purposes"
+  type        = number
+  default     = 60
+}
+
 
 variable "target_group_arn" {
   description = "The ARN of the target group"
