@@ -164,7 +164,7 @@ resource "aws_appautoscaling_target" "ecs" {
 
 
 resource "aws_appautoscaling_policy" "scaling_based_on_memory" {
-  name               = "dev-to-memory"
+  name               = "scaling_based_on_memory"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.ecs.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs.scalable_dimension
@@ -180,7 +180,7 @@ resource "aws_appautoscaling_policy" "scaling_based_on_memory" {
 }
 
 resource "aws_appautoscaling_policy" "scaling_based_on_cpu" {
-  name               = "dev-to-cpu"
+  name               = "scaling_based_on_cpu"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.ecs.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs.scalable_dimension
