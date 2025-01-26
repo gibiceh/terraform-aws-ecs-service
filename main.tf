@@ -121,6 +121,11 @@ resource "aws_security_group" "ecs" {
 
 resource "aws_ecs_cluster" "this" {
   name = var.ecs_cluster_name
+
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
 }
 
 resource "aws_ecs_service" "this" {
@@ -132,6 +137,7 @@ resource "aws_ecs_service" "this" {
   deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 200
   launch_type                        = "FARGATE"
+  platform_version                   = "LATEST"
   scheduling_strategy                = "REPLICA"
   health_check_grace_period_seconds  = 120
 
