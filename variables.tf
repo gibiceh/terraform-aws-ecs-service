@@ -125,8 +125,8 @@ variable "byo_ecs_task_definition_arn" {
   default     = ""
 }
 
-variable "byo_ecs_task_execution_policy_arn" {
-  description = "This is the BYO (Bring Your Own) ECS task execution policy ARN for the application"
+variable "ecs_task_execution_policy_arn" {
+  description = "This is the ECS task execution policy ARN for the application"
   type        = string
-  default     = ""
+  default     = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }

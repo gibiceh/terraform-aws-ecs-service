@@ -96,7 +96,7 @@ resource "aws_iam_role_policy_attachment" "ecs-task-execution-role-policy-attach
   count = var.create_ecs_task_definition ? 1 : 0
   role  = join("", aws_iam_role.ecs_task_execution_role.*.name)
 
-  policy_arn = var.byo_ecs_task_execution_policy_arn != "" ? var.byo_ecs_task_execution_policy_arn : "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+  policy_arn = var.ecs_task_execution_policy_arn
 }
 
 resource "aws_security_group" "ecs" {
