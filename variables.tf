@@ -130,3 +130,9 @@ variable "ecs_task_execution_policy_arn" {
   type        = string
   default     = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
+
+variable "cloudwatch_log_retention_in_days" {
+  description = "The number of days to retain the logs in CloudWatch"
+  type        = number
+  default     = 365
+}

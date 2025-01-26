@@ -11,7 +11,7 @@ resource "aws_cloudwatch_log_group" "this" {
   count             = var.create_ecs_task_definition ? 1 : 0
   name              = var.default_resource_name
   tags              = var.tags
-  retention_in_days = 30
+  retention_in_days = var.cloudwatch_log_retention_in_days
 }
 
 #: -----------------------------------------------------------------------------
@@ -207,10 +207,11 @@ resource "aws_ecs_task_definition" "this" {
   execution_role_arn       = join("", aws_iam_role.ecs_task_execution_role.*.arn)
   task_role_arn            = join("", aws_iam_role.ecs_task_role.*.arn)
   container_definitions = jsonencode([{
-    name        = var.ecs_container_name
-    image       = var.ecs_container_image
-    essential   = true
-    environment = var.ecs_container_environment_variables
+    name                   = var.ecs_container_name
+    image                  = var.ecs_container_image
+    essential              = true
+    readonlyRootFilesystem = true
+    environment            = var.ecs_container_environment_variables
     portMappings = [{
       protocol      = "tcp"
       containerPort = var.ecs_container_port
