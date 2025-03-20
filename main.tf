@@ -215,7 +215,7 @@ resource "aws_ecs_task_definition" "this" {
     name                   = var.ecs_container_name
     image                  = var.ecs_container_image
     essential              = true
-    readonlyRootFilesystem = true
+    readonlyRootFilesystem = var.ecs_read_only_root_filesystem
     environment            = var.ecs_container_environment_variables
     portMappings = [{
       protocol      = "tcp"

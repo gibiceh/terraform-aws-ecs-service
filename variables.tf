@@ -81,6 +81,12 @@ variable "ecs_target_cpu_utilization" {
   default     = 60
 }
 
+variable "ecs_read_only_root_filesystem" {
+  description = "Whether the container has a read-only root filesystem"
+  type        = bool
+  default     = false
+}
+
 
 variable "target_group_arn" {
   description = "The ARN of the target group"
