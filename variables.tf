@@ -151,3 +151,9 @@ variable "ecs_container_secrets" {
   }))
   default = []
 }
+
+variable "ecs_task_definition_skip_destroy" {
+  description = "Retain old task definition revisions instead of deregistering them. Should stay true wherever CodeDeploy blue/green is used, since deregistered revisions cannot be rolled back to."
+  type        = bool
+  default     = true
+}

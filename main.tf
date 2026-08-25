@@ -203,8 +203,14 @@ resource "aws_appautoscaling_policy" "scaling_based_on_cpu" {
 }
 
 resource "aws_ecs_task_definition" "this" {
-  count                    = var.create_ecs_task_definition ? 1 : 0
-  family                   = var.default_resource_name
+  count  = var.create_ecs_task_definition ? 1 : 0
+  family = var.default_resource_name
+
+  #: Retain old revisions when a new one is registered. Without this, Terraform
+  #: DEREGISTERS the previous revision on every change -- which destroys the
+  #: rollback targets CodeDeploy blue/green relies on, and can deregister the
+  #: revision a running service still references.
+  skip_destroy             = var.ecs_task_definition_skip_destroy
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = var.fargate_cpu
