@@ -217,25 +217,17 @@ resource "aws_ecs_task_definition" "this" {
     essential              = true
     readonlyRootFilesystem = var.ecs_read_only_root_filesystem
     environment            = var.ecs_container_environment_variables
+
+    #: Resolved by the TASK EXECUTION role at container start, never baked into
+    #: the image. valueFrom is a Secrets Manager or SSM ARN, optionally with a
+    #: ":jsonKey::" suffix to pull a single key out of a JSON secret.
+    secrets = var.ecs_container_secrets
+
     portMappings = [{
       protocol      = "tcp"
       containerPort = var.ecs_container_port
       hostPort      = var.ecs_container_port
     }]
-
-    container_env_variables = [
-      {
-        "name" : "version",
-        "value" : "1.0.2"
-      }
-    ]
-
-    container_env_files = [
-      {
-        "value" : "${var.default_resource_name}/envile.env",
-        "type" : "s3"
-      }
-    ]
 
     logConfiguration = {
       logDriver = "awslogs"

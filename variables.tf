@@ -142,3 +142,12 @@ variable "cloudwatch_log_retention_in_days" {
   type        = number
   default     = 365
 }
+
+variable "ecs_container_secrets" {
+  description = "Secrets injected at container start, resolved by the task execution role. valueFrom is a Secrets Manager or SSM ARN, optionally suffixed with ':jsonKey::' to select one key from a JSON secret. The execution role must be granted read access to each ARN."
+  type = list(object({
+    name      = string
+    valueFrom = string
+  }))
+  default = []
+}
